@@ -166,6 +166,10 @@ public class HttpSession extends LocalClientSession {
 
             elements.add(compression);
         }
+        if (XMPPServer.getInstance().getIQRegisterHandler().isInbandRegEnabled()) {
+            elements.add(DocumentHelper.createElement(new QName("register",
+            new Namespace("", "http://jabber.org/features/iq-register"))));
+        }
         Element bind = DocumentHelper.createElement(new QName("bind",
                 new Namespace("", "urn:ietf:params:xml:ns:xmpp-bind")));
         elements.add(bind);
@@ -910,7 +914,7 @@ public class HttpSession extends LocalClientSession {
      * by the 'requests' attribute in the connection manager's Session Creation Response.
      * However the client MAY make one additional request if it is to pause or terminate a session.
      *
-     * @see <a href="http://www.xmpp.org/extensions/xep-0124.html#overactive">overactive</a>    
+     * @see <a href="http://www.xmpp.org/extensions/xep-0124.html#overactive">overactive</a>
      * @param isPoll true if the session is using polling.
      * @throws org.jivesoftware.openfire.http.HttpBindException if the connection has violated a facet of the HTTP binding
      *         protocol.
