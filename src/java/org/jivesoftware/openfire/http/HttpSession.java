@@ -1156,10 +1156,9 @@ public class HttpSession extends LocalClientSession {
         }
     }
 
-    private class Deliverable implements Comparable<Deliverable> {
+    private class Deliverable {
         private final String text;
         private final Collection<String> packets;
-        private long requestID;
 
         public Deliverable(String text) {
             this.text = text;
@@ -1199,14 +1198,6 @@ public class HttpSession extends LocalClientSession {
             }
         }
 
-        public void setRequestID(long requestID) {
-            this.requestID = requestID;
-        }
-
-        public long getRequestID() {
-            return requestID;
-        }
-
         public Collection<Packet> getPackets() {
             // Check if the Deliverable is about Packets or raw XML
             if (packets == null) {
@@ -1237,10 +1228,6 @@ public class HttpSession extends LocalClientSession {
                 }
             }
             return answer;
-        }
-
-        public int compareTo(Deliverable o) {
-            return (int) (o.getRequestID() - requestID);
         }
     }
 
