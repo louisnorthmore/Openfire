@@ -20,19 +20,16 @@
 
 package org.jivesoftware.openfire.http;
 
-import org.jivesoftware.util.JiveConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
 /**
  * Represents one HTTP connection with a client using the HTTP Binding service. The client will wait
- * on {@link #getResponse()} until the server forwards a message to it or the wait time on the
+ * on a response until the server forwards a message to it or the wait time on the
  * session timeout.
  *
  * @author Alexander Wenckus

@@ -21,7 +21,6 @@ package org.jivesoftware.openfire.http;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,11 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.QName;
-import org.eclipse.jetty.util.log.Log;
 import org.jivesoftware.openfire.SessionManager;
 import org.jivesoftware.openfire.StreamID;
-import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.util.JiveConstants;
 import org.jivesoftware.util.JiveGlobals;
@@ -319,18 +315,6 @@ public class HttpSessionManager {
         }
         try {
             return Integer.valueOf(value);
-        }
-        catch (Exception ex) {
-            return defaultValue;
-        }
-    }
-
-    private double getDoubleAttribute(String doubleValue, double defaultValue) {
-        if (doubleValue == null || "".equals(doubleValue.trim())) {
-            return defaultValue;
-        }
-        try {
-            return Double.parseDouble(doubleValue);
         }
         catch (Exception ex) {
             return defaultValue;
