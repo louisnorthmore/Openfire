@@ -96,7 +96,7 @@ public class HttpBindServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        // Add CORS headers for all HTTP responses (errors, etc.)
+        // Set CORS headers for all HTTP responses (errors, etc.)
         if (boshManager.isCORSEnabled())
         {
             if (boshManager.isAllOriginsAllowed()) {
