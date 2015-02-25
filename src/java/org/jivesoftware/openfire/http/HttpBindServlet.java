@@ -192,7 +192,16 @@ public class HttpBindServlet extends HttpServlet {
         // Process the parsed document.
         final String sid = node.attributeValue("sid");
         if (sid == null) {
-            // When there's no Session ID, this should be a request to create a new session.
+            // When there's no Session ID, this should be a request to create a new session. If there's additional content,
+            // something is wrong.
+            if (node.elements().size() > 0) {
+                // Invalid session request; missing sid
+                LOG.info("Root element 'body' does not contain a SID attribute value in parsed request data from [" + remoteAddress + "]");
+                sendLegacyError(context, BoshBindingError.badRequest);
+                return;
+            }
+
+            // We have a new session
             createNewSession(context, node);
         }
         else {
