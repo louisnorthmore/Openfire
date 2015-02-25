@@ -613,13 +613,16 @@ public class HttpSession extends LocalClientSession {
         if ("terminate".equals(type)) {
             close();
             connection.deliverBody(createEmptyBody(true));
+            lastRequestID = connection.getRequestId();
         }
         else if ("true".equals(restartStream) && rootNode.elements().size() == 0) {
             connection.deliverBody(createSessionRestartResponse());
+            lastRequestID = connection.getRequestId();
         }
         else if (pauseDuration > 0 && pauseDuration <= getMaxPause()) {
             pause(pauseDuration);
             connection.deliverBody(createEmptyBody(false));
+            lastRequestID = connection.getRequestId();
             setLastResponseEmpty(true);
         }
         else {
@@ -695,7 +698,10 @@ public class HttpSession extends LocalClientSession {
         context.setTimeout(getWait() * JiveConstants.SECOND);
         context.addListener(new AsyncListener() {
             @Override
-            public void onComplete(AsyncEvent asyncEvent) throws IOException {}
+            public void onComplete(AsyncEvent asyncEvent) throws IOException {
+                connectionQueue.remove(connection);
+                fireConnectionClosed(connection);
+            }
 
             @Override
             public void onTimeout(AsyncEvent asyncEvent) throws IOException {
@@ -709,7 +715,7 @@ public class HttpSession extends LocalClientSession {
                     }
                     lastRequestID = connection.getRequestId();
                 } catch (HttpConnectionClosedException e) {
-                    // TODO
+                    Log.warn("Unexpected exception while processing connection timeout.", e);
                 } finally {
                     connectionQueue.remove(connection);
                     fireConnectionClosed(connection);
@@ -717,7 +723,9 @@ public class HttpSession extends LocalClientSession {
             }
 
             @Override
-            public void onError(AsyncEvent asyncEvent) throws IOException {}
+            public void onError(AsyncEvent asyncEvent) throws IOException {
+                Log.warn("Unhandled AsyncListener error: " + asyncEvent.getThrowable());
+            }
 
             @Override
             public void onStartAsync(AsyncEvent asyncEvent) throws IOException {}
