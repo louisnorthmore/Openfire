@@ -372,13 +372,17 @@ public class HttpSessionManager {
         public void run() {
             long currentTime = System.currentTimeMillis();
             for (HttpSession session : sessionMap.values()) {
-                long lastActive = currentTime - session.getLastActivity();
-                if (Log.isDebugEnabled()) {
-                    Log.debug("Session was last active " + lastActive + " ms ago: " + session.getAddress());
-                }
-                if (lastActive > session.getInactivityTimeout() * JiveConstants.SECOND) {
-                    Log.info("Closing idle session: " + session.getAddress());
-                    session.close();
+                try {
+                    long lastActive = currentTime - session.getLastActivity();
+                    if (Log.isDebugEnabled()) {
+                        Log.debug("Session was last active " + lastActive + " ms ago: " + session.getAddress());
+                    }
+                    if (lastActive > session.getInactivityTimeout() * JiveConstants.SECOND) {
+                        Log.info("Closing idle session: " + session.getAddress());
+                        session.close();
+                    }
+                } catch (Exception e) {
+                    Log.error("Failed to determine idle state for session: " + session, e);
                 }
             }
         }
