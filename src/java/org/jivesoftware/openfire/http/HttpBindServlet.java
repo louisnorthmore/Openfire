@@ -233,7 +233,10 @@ public class HttpBindServlet extends HttpServlet {
 
         final HttpSession session = sessionManager.getSession(sid);
         if (session == null) {
-            LOG.warn("Client provided invalid session: " + sid + ". [" + context.getRequest().getRemoteAddr() + "]");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Client provided invalid session: " + sid + ". [" +
+                    context.getRequest().getRemoteAddr() + "]");
+            }
             sendLegacyError(context, BoshBindingError.itemNotFound, "Invalid SID value.");
             return;
         }
