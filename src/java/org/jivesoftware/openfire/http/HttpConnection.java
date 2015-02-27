@@ -36,7 +36,7 @@ import java.security.cert.X509Certificate;
  */
 public class HttpConnection {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpConnection.class);
+    private static final Logger Log = LoggerFactory.getLogger(HttpConnection.class);
 
     private final long requestId;
     private final X509Certificate[] sslCertificates;
@@ -54,7 +54,7 @@ public class HttpConnection {
      * @param isSecure true if this connection is using HTTPS
      * @param sslCertificates list of certificates presented by the client.
      */
-    public HttpConnection(long requestId, boolean isSecure, X509Certificate[] sslCertificates,AsyncContext context) {
+    public HttpConnection(long requestId, boolean isSecure, X509Certificate[] sslCertificates, AsyncContext context) {
         this.requestId = requestId;
         this.isSecure = isSecure;
         this.sslCertificates = sslCertificates;
@@ -75,9 +75,9 @@ public class HttpConnection {
             deliverBody(null);
         }
         catch (HttpConnectionClosedException e) {
-            LOG.warn("Unexpected exception occurred while trying to close an HttpException.", e);
+            Log.warn("Unexpected exception occurred while trying to close an HttpException.", e);
         } catch (IOException e) {
-            LOG.warn("Unexpected exception occurred while trying to close an HttpException.", e);
+            Log.warn("Unexpected exception occurred while trying to close an HttpException.", e);
         }
     }
 
@@ -107,16 +107,16 @@ public class HttpConnection {
      *
      * @param body the XMPP content to be forwarded to the client inside of a body tag.
      *
-     * @throws org.jivesoftware.openfire.http.HttpConnectionClosedException when this connection to the client has already received
+     * @throws HttpConnectionClosedException when this connection to the client has already received
      * a deliverable to forward to the client
      */
     public void deliverBody(String body) throws HttpConnectionClosedException, IOException {
         // We only want to use this function once so we will close it when the body is delivered.
-        synchronized (this) {
-            if (isClosed) {
-                throw new HttpConnectionClosedException("The http connection is no longer " +
-                        "available to deliver content");
-            }
+    	synchronized (this) {
+	        if (isClosed) {
+	            throw new HttpConnectionClosedException("The http connection is no longer " +
+	                    "available to deliver content");
+	        }
             isClosed = true;
         }
 
@@ -162,9 +162,9 @@ public class HttpConnection {
         return sslCertificates;
     }
 
-    @Override
-    public String toString() {
-        return (session != null ? session.toString() : "[Anonymous]")
-                + " rid: " + this.getRequestId();
-    }
+	@Override
+	public String toString() {
+		return (session != null ? session.toString() : "[Anonymous]")
+				+ " rid: " + this.getRequestId();
+	}
 }

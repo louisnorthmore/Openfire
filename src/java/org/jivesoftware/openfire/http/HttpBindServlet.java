@@ -45,15 +45,15 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
  * Servlet which handles requests to the HTTP binding service. It determines if there is currently
- * an {@link org.jivesoftware.openfire.http.HttpSession} related to the connection or if one needs to be created and then passes it
- * off to the {@link org.jivesoftware.openfire.http.HttpBindManager} for processing of the client request and formulating of the
+ * an {@link HttpSession} related to the connection or if one needs to be created and then passes it
+ * off to the {@link HttpBindManager} for processing of the client request and formulating of the
  * response.
  *
  * @author Alexander Wenckus
  */
 public class HttpBindServlet extends HttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpBindServlet.class);
+	private static final Logger Log = LoggerFactory.getLogger(HttpBindServlet.class);
 
     private HttpSessionManager sessionManager;
     private HttpBindManager boshManager;
@@ -65,7 +65,7 @@ public class HttpBindServlet extends HttpServlet {
             factory = XmlPullParserFactory.newInstance(MXParser.class.getName(), null);
         }
         catch (XmlPullParserException e) {
-            LOG.error("Error creating a parser factory", e);
+            Log.error("Error creating a parser factory", e);
         }
     }
 
@@ -76,8 +76,7 @@ public class HttpBindServlet extends HttpServlet {
 
 
     @Override
-    public void init(ServletConfig servletConfig) throws ServletException
-    {
+    public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
         boshManager = HttpBindManager.getInstance();
         sessionManager = boshManager.getSessionManager();
@@ -86,8 +85,7 @@ public class HttpBindServlet extends HttpServlet {
 
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
         super.destroy();
         sessionManager.stop();
     }
@@ -114,7 +112,6 @@ public class HttpBindServlet extends HttpServlet {
             response.setHeader("Access-Control-Allow-Headers", HttpBindManager.HTTP_BIND_CORS_ALLOW_HEADERS_DEFAULT);
             response.setHeader("Access-Control-Max-Age", HttpBindManager.HTTP_BIND_CORS_MAX_AGE_DEFAULT);
         }
-
         super.service(request, response);
     }
 
@@ -164,27 +161,27 @@ public class HttpBindServlet extends HttpServlet {
         try {
             document = getPacketReader().read(new StringReader(content), "UTF-8");
         } catch (Exception ex) {
-            LOG.warn("Error parsing request data from [" + remoteAddress + "]", ex);
+            Log.warn("Error parsing request data from [" + remoteAddress + "]", ex);
             sendLegacyError(context, BoshBindingError.badRequest);
             return;
         }
 
         if (document == null) {
-            LOG.info("The result of parsing request data from [" + remoteAddress + "] was a null-object.");
+            Log.info("The result of parsing request data from [" + remoteAddress + "] was a null-object.");
             sendLegacyError(context, BoshBindingError.badRequest);
             return;
         }
 
         final Element node = document.getRootElement();
         if (node == null || !"body".equals(node.getName())) {
-            LOG.info("Root element 'body' is missing from parsed request data from [" + remoteAddress + "]");
+            Log.info("Root element 'body' is missing from parsed request data from [" + remoteAddress + "]");
             sendLegacyError(context, BoshBindingError.badRequest);
             return;
         }
 
         final long rid = getLongAttribute(node.attributeValue("rid"), -1);
         if (rid <= 0) {
-            LOG.info("Root element 'body' does not contain a valid RID attribute value in parsed request data from [" + remoteAddress + "]");
+            Log.info("Root element 'body' does not contain a valid RID attribute value in parsed request data from [" + remoteAddress + "]");
             sendLegacyError(context, BoshBindingError.badRequest, "Body-element is missing a RID (Request ID) value, or the provided value is a non-positive integer.");
             return;
         }
@@ -196,7 +193,7 @@ public class HttpBindServlet extends HttpServlet {
             // something is wrong.
             if (node.elements().size() > 0) {
                 // Invalid session request; missing sid
-                LOG.info("Root element 'body' does not contain a SID attribute value in parsed request data from [" + remoteAddress + "]");
+                Log.info("Root element 'body' does not contain a SID attribute value in parsed request data from [" + remoteAddress + "]");
                 sendLegacyError(context, BoshBindingError.badRequest);
                 return;
             }
@@ -221,7 +218,7 @@ public class HttpBindServlet extends HttpServlet {
             final InetAddress address = InetAddress.getByName(context.getRequest().getRemoteAddr());
             connection.setSession(sessionManager.createSession(address, rootNode, connection));
             if (JiveGlobals.getBooleanProperty("log.httpbind.enabled", false)) {
-                LOG.info(new Date() + ": HTTP RECV(" + connection.getSession().getStreamID().getID() + "): " + rootNode.asXML());
+                Log.info(new Date() + ": HTTP RECV(" + connection.getSession().getStreamID().getID() + "): " + rootNode.asXML());
             }
         }
         catch (UnauthorizedException e) {
@@ -237,13 +234,13 @@ public class HttpBindServlet extends HttpServlet {
             throws IOException
     {
         if (JiveGlobals.getBooleanProperty("log.httpbind.enabled", false)) {
-            LOG.info(new Date() + ": HTTP RECV(" + sid + "): " + rootNode.asXML());
+            Log.info(new Date() + ": HTTP RECV(" + sid + "): " + rootNode.asXML());
         }
 
         final HttpSession session = sessionManager.getSession(sid);
         if (session == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Client provided invalid session: " + sid + ". [" +
+            if (Log.isDebugEnabled()) {
+                Log.debug("Client provided invalid session: " + sid + ". [" +
                     context.getRequest().getRemoteAddr() + "]");
             }
             sendLegacyError(context, BoshBindingError.itemNotFound, "Invalid SID value.");
@@ -260,7 +257,7 @@ public class HttpBindServlet extends HttpServlet {
                 sendError(session, context, e.getBindingError());
             }
             catch (HttpConnectionClosedException nc) {
-                LOG.error("Error sending packet to client.", nc);
+                Log.error("Error sending packet to client.", nc);
                 context.complete();
             }
         }
@@ -298,7 +295,7 @@ public class HttpBindServlet extends HttpServlet {
         }
 
         if (JiveGlobals.getBooleanProperty("log.httpbind.enabled", false)) {
-            LOG.info(new Date()+": HTTP SENT(" + session.getStreamID().getID() + "): " + content);
+            Log.info(new Date()+": HTTP SENT(" + session.getStreamID().getID() + "): " + content);
         }
 
         byte[] byteContent = content.getBytes("UTF-8");
@@ -312,7 +309,7 @@ public class HttpBindServlet extends HttpServlet {
             throws IOException
     {
         if (JiveGlobals.getBooleanProperty("log.httpbind.enabled", false)) {
-            LOG.info(new Date() + ": HTTP ERR(" + session.getStreamID().getID() + "): " + bindingError.getErrorType().getType() + ", " + bindingError.getCondition() + ".");
+            Log.info(new Date() + ": HTTP ERR(" + session.getStreamID().getID() + "): " + bindingError.getErrorType().getType() + ", " + bindingError.getCondition() + ".");
         }
         try {
             if ((session.getMajorVersion() == 1 && session.getMinorVersion() >= 6) || session.getMajorVersion() > 1)
@@ -418,7 +415,7 @@ public class HttpBindServlet extends HttpServlet {
 
         @Override
         public void onDataAvailable() throws IOException {
-            LOG.trace("Data is available to be read from [" + remoteAddress + "]");
+            Log.trace("Data is available to be read from [" + remoteAddress + "]");
 
             final ServletInputStream inputStream = context.getRequest().getInputStream();
 
@@ -431,17 +428,17 @@ public class HttpBindServlet extends HttpServlet {
 
         @Override
         public void onAllDataRead() throws IOException {
-            LOG.trace("All data has been read from [" + remoteAddress + "]");
+            Log.trace("All data has been read from [" + remoteAddress + "]");
             processContent(context, buffer.toString());
         }
 
         @Override
         public void onError(Throwable throwable) {
-            LOG.warn("Error reading request data from [" + remoteAddress + "]", throwable);
+            Log.warn("Error reading request data from [" + remoteAddress + "]", throwable);
             try {
                 sendLegacyError(context, BoshBindingError.badRequest);
             } catch (IOException ex) {
-                LOG.debug("Error while sending an error to ["+remoteAddress +"] in response to an earlier data-read failure.", ex);
+                Log.debug("Error while sending an error to ["+remoteAddress +"] in response to an earlier data-read failure.", ex);
             }
         }
     }

@@ -48,11 +48,11 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpSessionManager {
 
-    private static final Logger Log = LoggerFactory.getLogger(HttpSessionManager.class);
+	private static final Logger Log = LoggerFactory.getLogger(HttpSessionManager.class);
 
     private SessionManager sessionManager;
     private Map<String, HttpSession> sessionMap = new ConcurrentHashMap<String, HttpSession>(
-            JiveGlobals.getIntProperty("xmpp.httpbind.session.initial.count", 16));
+    		JiveGlobals.getIntProperty("xmpp.httpbind.session.initial.count", 16));
     private TimerTask inactivityTask;
     private ThreadPoolExecutor sendPacketPool;
     private SessionListener sessionListener = new SessionListener() {
@@ -90,26 +90,26 @@ public class HttpSessionManager {
         // to this worker pool to ensure timely delivery of inbound packets
 
         int maxPoolSize = JiveGlobals.getIntProperty("xmpp.httpbind.worker.threads",
-                // use deprecated property as default (shared with ConnectionManagerImpl)
-                JiveGlobals.getIntProperty("xmpp.client.processing.threads", 8));
+				// use deprecated property as default (shared with ConnectionManagerImpl)
+				JiveGlobals.getIntProperty("xmpp.client.processing.threads", 8));
         int keepAlive = JiveGlobals.getIntProperty("xmpp.httpbind.worker.timeout", 60);
 
         sendPacketPool = new ThreadPoolExecutor(getCorePoolSize(maxPoolSize), maxPoolSize, keepAlive, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), // unbounded task queue
-                new ThreadFactory() { // custom thread factory for BOSH workers
-                    final AtomicInteger counter = new AtomicInteger(1);
-                    public Thread newThread(Runnable runnable) {
-                        Thread thread = new Thread(Thread.currentThread().getThreadGroup(), runnable,
-                                "httpbind-worker-" + counter.getAndIncrement());
-                        thread.setDaemon(true);
-                        return thread;
-                    }
-                });
+			new LinkedBlockingQueue<Runnable>(), // unbounded task queue
+	        new ThreadFactory() { // custom thread factory for BOSH workers
+	            final AtomicInteger counter = new AtomicInteger(1);
+	            public Thread newThread(Runnable runnable) {
+	                Thread thread = new Thread(Thread.currentThread().getThreadGroup(), runnable,
+	                                    "httpbind-worker-" + counter.getAndIncrement());
+	                thread.setDaemon(true);
+	                return thread;
+	            }
+	    	});
     }
 
-    private int getCorePoolSize(int maxPoolSize) {
-        return (maxPoolSize/4)+1;
-    }
+	private int getCorePoolSize(int maxPoolSize) {
+		return (maxPoolSize/4)+1;
+	}
 
     /**
      * Starts the services used by the HttpSessionManager.
@@ -153,9 +153,9 @@ public class HttpSessionManager {
      * this connection.
      * @return the created HTTP session.
      *
-     * @throws org.jivesoftware.openfire.auth.UnauthorizedException if the Openfire server is currently in an uninitialized state.
+     * @throws UnauthorizedException if the Openfire server is currently in an uninitialized state.
      * Either shutting down or starting up.
-     * @throws org.jivesoftware.openfire.http.HttpBindException when there is an internal server error related to the creation of
+     * @throws HttpBindException when there is an internal server error related to the creation of
      * the initial session creation response.
      */
     public HttpSession createSession(InetAddress address, Element rootNode,
@@ -174,7 +174,7 @@ public class HttpSessionManager {
 
         String version = rootNode.attributeValue("ver");
         if (version == null || "".equals(version)) {
-            version = "1.5";
+        	version = "1.5";
         }
 
         HttpSession session = createSession(connection.getRequestId(), address, connection);
@@ -186,12 +186,12 @@ public class HttpSessionManager {
         session.setMaxPause(getMaxPause());
 
         if(session.isPollingSession()) {
-            session.setDefaultInactivityTimeout(getPollingInactivityTimeout());
+        	session.setDefaultInactivityTimeout(getPollingInactivityTimeout());
         }
         else {
-            session.setDefaultInactivityTimeout(getInactivityTimeout());
+        	session.setDefaultInactivityTimeout(getInactivityTimeout());
         }
-        session.resetInactivityTimeout();
+    	session.resetInactivityTimeout();
 
         // Store language and version information in the connection.
         session.setLanguage(language);
@@ -334,12 +334,12 @@ public class HttpSessionManager {
         response.addAttribute("polling", String.valueOf(session.getMaxPollingInterval()));
         response.addAttribute("wait", String.valueOf(session.getWait()));
         if ((session.getMajorVersion() == 1 && session.getMinorVersion() >= 6) ||
-                session.getMajorVersion() > 1) {
+        	session.getMajorVersion() > 1) {
             response.addAttribute("hold", String.valueOf(session.getHold()));
             response.addAttribute("ack", String.valueOf(session.getLastAcknowledged()));
             response.addAttribute("maxpause", String.valueOf(session.getMaxPause()));
             response.addAttribute("ver", String.valueOf(session.getMajorVersion())
-                    + "." + String.valueOf(session.getMinorVersion()));
+            		+ "." + String.valueOf(session.getMinorVersion()));
         }
 
         Element features = response.addElement("stream:features");
@@ -353,21 +353,21 @@ public class HttpSessionManager {
     private class HttpSessionReaper extends TimerTask {
 
         @Override
-        public void run() {
+		public void run() {
             long currentTime = System.currentTimeMillis();
             for (HttpSession session : sessionMap.values()) {
-                try {
+            	try {
                     long lastActive = currentTime - session.getLastActivity();
                     if (Log.isDebugEnabled()) {
-                        Log.debug("Session was last active " + lastActive + " ms ago: " + session.getAddress());
+                    	Log.debug("Session was last active " + lastActive + " ms ago: " + session.getAddress());
                     }
                     if (lastActive > session.getInactivityTimeout() * JiveConstants.SECOND) {
-                        Log.info("Closing idle session: " + session.getAddress());
+                    	Log.info("Closing idle session: " + session.getAddress());
                         session.close();
                     }
-                } catch (Exception e) {
-                    Log.error("Failed to determine idle state for session: " + session, e);
-                }
+            	} catch (Exception e) {
+            		Log.error("Failed to determine idle state for session: " + session, e);
+            	}
             }
         }
     }
