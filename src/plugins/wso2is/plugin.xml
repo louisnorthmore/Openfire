@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <class>org.jivesoftware.openfire.plugin.WSO2ISPlugin</class>
+    <name>WSO2IS</name>
+    <description>WSO2 Identity Server based authentication.</description>
+    <author>Guus der Kinderen</author>
+    <version>1.0.0</version>
+    <date>02/23/2016</date>
+    <minServerVersion>4.1.0 Alpha</minServerVersion>
+</plugin>
