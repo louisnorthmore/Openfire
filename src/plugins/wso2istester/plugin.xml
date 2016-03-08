@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <class>org.jivesoftware.openfire.plugin.WSO2ISTesterPlugin</class>
+    <name>WSO2IS Tester</name>
+    <description>Test utils for the WSO2IS plugin</description>
+    <author>Guus der Kinderen</author>
+    <version>1.0.0</version>
+    <date>03/07/2016</date>
+    <minServerVersion>4.1.0 Alpha</minServerVersion>
+</plugin>
