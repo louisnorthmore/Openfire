@@ -13,7 +13,9 @@ import org.keycloak.admin.client.Config;
 import java.net.URI;
 
 /**
- * This is a copy of org.keycloak.admin.client.Keycloak, with one modification: a different Token manager is used.
+ * This is a copy of org.keycloak.admin.client.Keycloak, with two modifications:
+ *  - a different Token manager is used (which itself introduces a modification)
+ *  - an additional getInstance is used to be able to override the Resteasy client.
  *
  * @author Guus der Kinderen, guus.der.kinderen@gmail.com
  */
@@ -33,6 +35,10 @@ public class Keycloak {
         target = client.target(config.getServerUrl());
 
         target.register(new BearerAuthFilter(tokenManager));
+    }
+
+    public static Keycloak getInstance(String serverUrl, String realm, String username, String password, String clientId, String clientSecret, ResteasyClient resteasyClient){
+        return new Keycloak(serverUrl, realm, username, password, clientId, clientSecret, resteasyClient);
     }
 
     public static Keycloak getInstance(String serverUrl, String realm, String username, String password, String clientId, String clientSecret){

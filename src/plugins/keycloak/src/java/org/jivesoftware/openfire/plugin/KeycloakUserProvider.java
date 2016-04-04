@@ -1,6 +1,8 @@
 package org.jivesoftware.openfire.plugin;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jivesoftware.openfire.plugin.keycloak.Keycloak;
+import org.jivesoftware.openfire.session.ConnectionSettings;
 import org.jivesoftware.openfire.user.User;
 import org.jivesoftware.openfire.user.UserAlreadyExistsException;
 import org.jivesoftware.openfire.user.UserNotFoundException;
@@ -58,7 +60,8 @@ public class KeycloakUserProvider implements UserProvider
         final String clientId = JiveGlobals.getProperty( "keycloak.clientid", "openfire" );
         final String clientSecret = JiveGlobals.getProperty( "keycloak.clientsecret", "6817c4a7-7cbb-4fe1-9182-cf61b28f71ed" );
 
-        keycloak = Keycloak.getInstance( serverUrl, realm, username, password, clientId, clientSecret );
+        final ResteasyClientBuilder builder = new ResteasyClientBuilder().connectionPoolSize( JiveGlobals.getIntProperty( ConnectionSettings.Client.MAX_THREADS, 17 ) );
+        keycloak = Keycloak.getInstance( serverUrl, realm, username, password, clientId, clientSecret, builder.build() );
         usersResource = keycloak.realm( realm ).users();
 
         // Verify that communication with the keycloak server is possible.
