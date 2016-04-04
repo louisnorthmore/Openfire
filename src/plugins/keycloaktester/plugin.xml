@@ -5,7 +5,6 @@
     <name>Keycloak Tester</name>
     <description>Test utils for the Keycloak plugin</description>
     <author>Guus der Kinderen</author>
-    <version>1.0.0</version>
-    <date>03/29/2016</date>
-    <minServerVersion>4.1.0 Alpha</minServerVersion>
+    <version>1.0.1</version>
+    <date>04/04/2016</date>
 </plugin>

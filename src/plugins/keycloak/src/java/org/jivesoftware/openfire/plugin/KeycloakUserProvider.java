@@ -92,7 +92,8 @@ public class KeycloakUserProvider implements UserProvider
         }
         else
         {
-            creation = null;
+            //creation = null;
+            creation = new Date( 0 ); // TODO In Openfire 4.1 and later, null values are accepted.
         }
 
         final Date lastModified = null;

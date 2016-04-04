@@ -115,4 +115,31 @@ public class KeycloakAuthProvider implements AuthProvider
     {
 
     }
+
+    /**
+     * @deprecated this method is added only for backwards compatiblity to Openfire 4.0.1. It should be removed for Openfire 4.1 onwards.
+     */
+    @Override
+    public boolean isPlainSupported()
+    {
+        return true;
+    }
+
+    /**
+     * @deprecated this method is added only for backwards compatiblity to Openfire 4.0.1. It should be removed for Openfire 4.1 onwards.
+     */
+    @Override
+    public boolean isDigestSupported()
+    {
+        return false;
+    }
+
+    /**
+     * @deprecated this method is added only for backwards compatiblity to Openfire 4.0.1. It should be removed for Openfire 4.1 onwards.
+     */
+    @Override
+    public void authenticate( String username, String token, String digest ) throws UnauthorizedException, ConnectionException, InternalUnauthenticatedException
+    {
+        throw new UnsupportedOperationException();
+    }
 }
