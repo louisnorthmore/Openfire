@@ -10,6 +10,11 @@
         BODY, TD, TH {
             font-family : tahoma, verdana, arial, helvetica, sans-serif;
             font-size : 0.8em;
+            text-align: left;
+        }
+        CAPTION {
+            font-size: 0.7em;
+            margin-top: 1.2em;
         }
         H2 {
              font-size : 10pt;
@@ -55,9 +60,92 @@ This plugin adds authentication based on Keycloak to Openfire.
 plugin will then be automatically deployed. To upgrade to a new version, copy the new
 Keycloak.jar file over the existing file.</p>
 
-<h2>Configuration</h2>
+<p>When the plugin starts, it will attempt to connect to a Keycloak instance using the
+configuration provided by the property settings listed below. Please note that when at
+this time Openfire is unable to connect to Keycloak, the plugin <em>will not start
+nor recover</em> from this failure. Being unable to connect to Keycloak is considered
+a <em>permanent failure</em> at this stage. Although visually, the plugin is 'loaded',
+it will not provide any functionality to Openfire. To try to connect to Keycloak again,
+the plugin needs to be reloaded or redeployed.</p>
 
-<p>(tbd)</p>
+<p><em>After</em> the plugin is initialized, any problem with communication between
+Openfire and Keycloak is considered to be a <em>temporary failure</em>e. The problem is
+likely to cause an exception being thrown in the code that invokes the execution, which
+will continue to occur until communiction between Openfire and Keycloak is restored.</p>
+
+<h2>Keycloak Configuration</h2>
+
+<p>For this plugin to be able to communicate with your Keycloak instance, these settings
+have to be applied in Keycloak.</p>
+
+<p>From Keycloak's perspective, Openfire is a 'client'. To register a client in Keycloak,
+open the administrative console of the Keycloak instance and select the realm that is to
+be used for Openfire. There, configure a 'client'.</p>
+
+<p>When creating a new client, you'll need to select a few options. At the very least,
+you'll need to register a <tt>client ID</tt> (which is distinct from the optional
+<tt>client name</tt>, which is a more human-readable identifier for the client). By
+default, Openfire is configured to the value of 'openfire' for the client ID. If
+another value is used, make sure to override the default Openfire property, as listed
+below.</p>
+
+<p>The <tt>client protocol</tt> setting for the Keycloak value 'openid-connect'.</p>
+
+<p>The <tt>access type</tt> should be 'confidential'.</p>
+
+<p>The <tt>valid redirect uri</tt> setting needs to include a wildcard path that refers to
+the (non-authorized part of the) Openfire plugin administrative console. A typical value
+would be: 'http://localhost:9090/plugins/keycloak/*'</p>
+
+<h2>Openfire Configuration</h2>
+
+<p>The plugin takes its configuration from the following properties. Note that all
+properties are non-optional. Either they must be defined, or their default value must
+reflect the existing configuration in Keycloak.</p>
+
+<table>
+    <caption>Openfire properties for the Keycloak plugin</caption>
+    <thead>
+        <tr><th>Property name</th><th>Default value</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><tt>keycloak.url</tt></td>
+            <td><pre>http://localhost:8080/auth</pre></td>
+            <td>Base url of the Keycloak instance.</td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.realm</tt></td>
+            <td><pre>amisnuage</pre></td>
+            <td>Keycloak realm to be used to obtain users and groups from.</td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.username</tt></td>
+            <td><pre>admin</pre></td>
+            <td>User used when establishing connection between Openfire and Keycloak.</td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.password</tt></td>
+            <td><pre>admin</pre></td>
+            <td>Password for <tt>keycloak.username</tt></td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.clientid</tt></td>
+            <td><pre>openfire</pre></td>
+            <td>Client ID that is used in Keycloak to identify this Openfire instance.</td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.clientsecret</tt></td>
+            <td><pre>6817c4a7-7cbb-4fe1-9182-cf61b28f71ed</pre></td>
+            <td>Client secret (corresponds to <tt>keycloak.clientid</tt>)</td>
+        </tr>
+        <tr>
+            <td><tt>keycloak.adminrole</tt></td>
+            <td><pre>realm-admin</pre></td>
+            <td>Users with this role (in Keycloak) will be Openfire administrators.</td>
+        </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
