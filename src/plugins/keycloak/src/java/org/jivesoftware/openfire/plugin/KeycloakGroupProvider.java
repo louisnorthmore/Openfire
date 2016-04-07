@@ -1,14 +1,15 @@
 package org.jivesoftware.openfire.plugin;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.group.AbstractGroupProvider;
 import org.jivesoftware.openfire.group.Group;
 import org.jivesoftware.openfire.group.GroupNotFoundException;
-import org.jivesoftware.openfire.plugin.keycloak.Keycloak;
-import org.jivesoftware.openfire.session.ConnectionSettings;
 import org.jivesoftware.util.JiveGlobals;
-import org.keycloak.admin.client.resource.*;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.GroupResource;
+import org.keycloak.admin.client.resource.GroupsResource;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
@@ -70,8 +71,7 @@ public class KeycloakGroupProvider extends AbstractGroupProvider
         final String clientId = JiveGlobals.getProperty( "keycloak.clientId", "openfire" );
         final String clientSecret = JiveGlobals.getProperty( "keycloak.clientSecret", "6817c4a7-7cbb-4fe1-9182-cf61b28f71ed" );
 
-        final ResteasyClientBuilder builder = new ResteasyClientBuilder().connectionPoolSize( JiveGlobals.getIntProperty( ConnectionSettings.Client.MAX_THREADS, 17 ) );
-        keycloak = Keycloak.getInstance( serverUrl, realm, username, password, clientId, clientSecret, builder.build() );
+        keycloak = Keycloak.getInstance( serverUrl, realm, username, password, clientId, clientSecret );
         realmResource = keycloak.realm( realm );
         groupsResource = keycloak.realm( realm ).groups();
         usersResource = keycloak.realm( realm ).users();
