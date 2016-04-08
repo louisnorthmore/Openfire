@@ -131,8 +131,7 @@ public class KeycloakUserProvider implements UserProvider
     @Override
     public int getUserCount()
     {
-        // TODO Improve on this! This retrieves all users (and then counts them), which is very inefficient.
-        return usersResource.search( null, 0, Integer.MAX_VALUE ).size();
+        return usersResource.count();
     }
 
     @Override
