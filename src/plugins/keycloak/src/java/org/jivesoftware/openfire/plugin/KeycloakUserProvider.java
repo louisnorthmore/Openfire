@@ -7,10 +7,12 @@ import org.jivesoftware.openfire.user.UserProvider;
 import org.jivesoftware.util.JiveGlobals;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 /**
@@ -104,28 +106,102 @@ public class KeycloakUserProvider implements UserProvider
         return user;
     }
 
-    @Override
-    public User loadUser( String username ) throws UserNotFoundException
+    protected UserRepresentation loadUserRepresentation( String username ) throws UserNotFoundException
     {
         final List<UserRepresentation> results = usersResource.search( username, null, null, null, 0, Integer.MAX_VALUE );
         for ( UserRepresentation result : results ) { // assumes that the first exact username hit is correct (and thus unique).
             if (result.getUsername().equals(username)) {
-                return asOpenfireUser( result );
+                return result;
             }
         }
         throw new UserNotFoundException();
     }
 
     @Override
+    public User loadUser( String username ) throws UserNotFoundException
+    {
+        return asOpenfireUser( loadUserRepresentation( username ) );
+    }
+
+    @Override
     public User createUser( String username, String password, String name, String email ) throws UserAlreadyExistsException
     {
-        throw new UnsupportedOperationException();
+        final UserRepresentation keycloakUser = new UserRepresentation();
+        keycloakUser.setUsername( username );
+        keycloakUser.setEmail( email );
+        keycloakUser.setEnabled( true );
+
+        if ( name != null && name.trim().length() > 0 )
+        {
+            final String[] nameParts = name.split( " ", 2 );
+            if ( nameParts.length > 0 )
+            {
+                keycloakUser.setFirstName( nameParts[ 0 ] );
+            }
+
+            if ( nameParts.length > 1 && !nameParts[ 1 ].isEmpty() )
+            {
+                keycloakUser.setLastName( nameParts[ 1 ] );
+            }
+        }
+
+        Response response = null;
+        try
+        {
+            // Create user and get its server-generated ID.
+            response = usersResource.create( keycloakUser );
+            if ( response.getStatus() == Response.Status.CONFLICT.getStatusCode() )
+            {
+                throw new UserAlreadyExistsException();
+            }
+            final String path = response.getLocation().getPath();
+            final String id = path.substring( path.lastIndexOf( '/' ) + 1 );
+
+            // Set password
+            final CredentialRepresentation credentials = new CredentialRepresentation();
+            credentials.setType( CredentialRepresentation.PASSWORD );
+            credentials.setValue( password );
+
+            usersResource.get( id ).resetPassword( credentials );
+        }
+        finally
+        {
+            if ( response != null )
+            {
+                response.close();
+            }
+        }
+
+        try
+        {
+            return loadUser( username );
+        }
+        catch ( UserNotFoundException ex )
+        {
+            throw new IllegalStateException( "An unexpected problem occurred while attempting to create a user named: " + username, ex );
+        }
     }
 
     @Override
     public void deleteUser( String username )
     {
-        throw new UnsupportedOperationException();
+        Response response = null;
+        try
+        {
+            final UserRepresentation representation = loadUserRepresentation( username );
+            response = usersResource.delete( representation.getId() );
+        }
+        catch ( UserNotFoundException e )
+        {
+            Log.info( "Silently ignoring a request to delete a user that does not exist in the first place. Username: '{}'.", username );
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
     }
 
     @Override
@@ -173,19 +249,42 @@ public class KeycloakUserProvider implements UserProvider
     @Override
     public void setName( String username, String name ) throws UserNotFoundException
     {
-        throw new UnsupportedOperationException();
-    }
+        final UserRepresentation representation = loadUserRepresentation( username );
+        representation.setFirstName( null );
+        representation.setLastName( null );
+
+        if ( name != null && name.trim().length() > 0 )
+        {
+            final String[] nameparts = name.split( " ", 2 );
+            if ( nameparts.length > 0 )
+            {
+                representation.setFirstName( nameparts[ 0 ] );
+            }
+
+            if ( nameparts.length > 1 && !nameparts[ 1 ].isEmpty() )
+            {
+                representation.setLastName( nameparts[ 1 ] );
+            }
+        }
+
+        usersResource.get( representation.getId() ).update( representation );    }
 
     @Override
     public void setEmail( String username, String email ) throws UserNotFoundException
     {
-        throw new UnsupportedOperationException();
+        final UserRepresentation representation = loadUserRepresentation( username );
+        representation.setEmail( email );
+
+        usersResource.get( representation.getId() ).update( representation );
     }
 
     @Override
     public void setCreationDate( String username, Date creationDate ) throws UserNotFoundException
     {
-        throw new UnsupportedOperationException();
+        final UserRepresentation representation = loadUserRepresentation( username );
+        representation.setCreatedTimestamp( creationDate.getTime() );
+
+        usersResource.get( representation.getId() ).update( representation );
     }
 
     @Override
@@ -238,7 +337,7 @@ public class KeycloakUserProvider implements UserProvider
     @Override
     public boolean isReadOnly()
     {
-        return true;
+        return false;
     }
 
     @Override

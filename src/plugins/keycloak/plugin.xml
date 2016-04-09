@@ -5,7 +5,7 @@
     <name>Keycloak</name>
     <description>Keycloak based authentication.</description>
     <author>Guus der Kinderen</author>
-    <version>1.0.1</version>
-    <date>04/04/2016</date>
+    <version>1.0.2</version>
+    <date>04/11/2016</date>
     <minServerVersion>4.0.1</minServerVersion>
 </plugin>
