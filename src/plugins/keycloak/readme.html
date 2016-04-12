@@ -120,6 +120,11 @@ reflect the existing configuration in Keycloak.</p>
             <td>Keycloak realm to be used to obtain users and groups from.</td>
         </tr>
         <tr>
+            <td><tt>keycloak.realmKey</tt></td>
+            <td><pre></pre></td>
+            <td>The public key of the realm as configured with <tt>keycloak.realm</tt>.</td>
+        </tr>
+        <tr>
             <td><tt>keycloak.username</tt></td>
             <td><pre>admin</pre></td>
             <td>User used when establishing connection between Openfire and Keycloak.</td>
@@ -130,14 +135,14 @@ reflect the existing configuration in Keycloak.</p>
             <td>Password for <tt>keycloak.username</tt></td>
         </tr>
         <tr>
-            <td><tt>keycloak.clientid</tt></td>
+            <td><tt>keycloak.clientId</tt></td>
             <td><pre>openfire</pre></td>
             <td>Client ID that is used in Keycloak to identify this Openfire instance.</td>
         </tr>
         <tr>
-            <td><tt>keycloak.clientsecret</tt></td>
+            <td><tt>keycloak.clientSecret</tt></td>
             <td><pre>6817c4a7-7cbb-4fe1-9182-cf61b28f71ed</pre></td>
-            <td>Client secret (corresponds to <tt>keycloak.clientid</tt>)</td>
+            <td>Client secret (corresponds to <tt>keycloak.clientId</tt>)</td>
         </tr>
         <tr>
             <td><tt>keycloak.group.admins</tt></td>
