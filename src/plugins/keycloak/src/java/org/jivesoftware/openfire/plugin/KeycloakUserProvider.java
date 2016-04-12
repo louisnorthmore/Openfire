@@ -57,8 +57,8 @@ public class KeycloakUserProvider implements UserProvider
         final String realm = JiveGlobals.getProperty( "keycloak.realm", "amisnuage" );
         final String username = JiveGlobals.getProperty( "keycloak.username", "admin" );
         final String password = JiveGlobals.getProperty( "keycloak.password", "admin" );
-        final String clientId = JiveGlobals.getProperty( "keycloak.clientid", "openfire" );
-        final String clientSecret = JiveGlobals.getProperty( "keycloak.clientsecret", "6817c4a7-7cbb-4fe1-9182-cf61b28f71ed" );
+        final String clientId = JiveGlobals.getProperty( "keycloak.clientId", "openfire" );
+        final String clientSecret = JiveGlobals.getProperty( "keycloak.clientSecret", "6817c4a7-7cbb-4fe1-9182-cf61b28f71ed" );
 
         keycloak = Keycloak.getInstance( serverUrl, realm, username, password, clientId, clientSecret );
         usersResource = keycloak.realm( realm ).users();
