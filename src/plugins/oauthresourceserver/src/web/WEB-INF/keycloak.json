@@ -1,0 +1,8 @@
+{
+  "realm": "iopsys-user",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAueJ8Is+40blTn0zMVsVLvIeVcCqn+bxYU8VY6V9OSeO5UQL4lL0yK/EAJHtD+SeKtg2zTifazhbU9lIBO+7siQv8k/1bnrQan9HKdssESyexkGgEzTJyKHpsXKgLYklbc64SfS+E1JV3jRSKbCXMsglQRpE9eFSi4K0L8i0SVybSZ7ww1sI3wgpOpW78endIh3arJ+xxbDkPvNCkNGwB8Ub0ltdyrw9A+uCSk1vYjvXbRozt2YX/Wnm5v5yFs7f61IQcPnWaZd4U2w0Op8PkfyE7U6nnBRuxmBTsNBKSKluZgcK2TITqwpRJaATLB3yrRT+JeG1akqTXrb7o86jsGQIDAQAB",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "external",
+  "resource": "test-widget-resourceserver",
+  "public-client": true
+}

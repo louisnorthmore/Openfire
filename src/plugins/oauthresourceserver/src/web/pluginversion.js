@@ -1,0 +1,1 @@
+iopsys.build.version.oauthresourceserver=release/GA/4.1-b8dc012b865a9c374dc1b7f659cdc833f99e753c

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <class>com.inteno.iopsys.plugin.oauthresourceserver.OAuthResourceServerPlugin</class>
+    <name>OAUTH Resource Server</name>
+    <description>Provides various bits of information to clients that provide valid OAuth tokens.</description>
+    <author>Guus der Kinderen</author>
+    <version>1.0.0</version>
+    <date>28 OCT 2016</date>
+</plugin>
