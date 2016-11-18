@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <class>ChildAPlugin</class>
+    <name>Child A</name>
+    <description>For testing plugin loading in parent/child-hierarchies.</description>
+    <author>Guus der Kinderen</author>
+    <version>1.0.0</version>
+    <date>10/11/2016</date>
+    <parentPlugin>parent</parentPlugin>
+</plugin>
