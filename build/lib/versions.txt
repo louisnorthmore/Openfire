@@ -3,6 +3,8 @@ Name                                |  Version                                  
 ant.jar                             | Jetty 6.1.0 (1.6.5)                                          | Apache 2.0
 ant-contrib.jar                     | 1.0b3                                                        | Apache 2.0
 ant-subdirtask.jar                  | Revision 1.4 (CVS)                                           |
+acme4j-client                       | 0.8                                                          | Apache 2.0
+acme4j-util                         | 0.8                                                          | Apache 2.0
 bcpg-jdk15on.jar                    | 1.53                                                         | See http://www.bouncycastle.org/licence.html
 bcpkix-jdk15on.jar                  | 1.53                                                         | See http://www.bouncycastle.org/licence.html
 bcprov-jdk15on.jar                  | 1.53                                                         | See http://www.bouncycastle.org/licence.html
@@ -59,6 +61,7 @@ jsmpp                               | 2.2.4                                     
 jtds.jar                            | 1.3.1                                                        | LGPL
 junit.jar                           | 4.11                                                         | EPL 1.0
 hamcrest-core.jar                   | 1.3 (required by junit)                                      | new BSD licence
+jose4j                              | 0.5.2 (required by acme4j)                                   | Apache 2.0
 jzlib.jar                           | 1.0.7                                                        | GPL
 libidn.jar                          | 1.15                                                         | GNU Lesser General Public License version 2.1 or later (http://www.gnu.org/licenses/licenses.html)
 log4j.jar                           | 1.2.17                                                       | Apache 2.0 (http://logging.apache.org/log4j/1.2/license.html)

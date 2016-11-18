@@ -87,6 +87,10 @@
 	<logger name="org.eclipse.jetty">
 		<level value="warn" />
 	</logger>
+
+	<logger name="org.shredzone.acme4j">
+		<level value="all" />
+	</logger>
 	
    	<root>
 		<level value="info" />
