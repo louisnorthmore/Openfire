@@ -1,7 +1,7 @@
 Name                     |  Version
 -----------------------------------------------------------------------------
 concurrent.jar           | 1.3.3
-dwr.jar                  | same version as monitoring plugin, unknown
+dwr.jar                  | 3.0.2
 httpclient.jar           | 4.0 beta1
 httpcore.jar             | 4.0 beta2
 jakarta-regexp.jar       | 1.3

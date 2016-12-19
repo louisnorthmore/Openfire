@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-    <!-- Servlets -->
+
     <servlet>
         <servlet-name>GraphServlet</servlet-name>
         <servlet-class>org.jivesoftware.openfire.reporting.graph.GraphServlet</servlet-class>
@@ -13,31 +13,23 @@
         <description>Direct Web Remoter Servlet</description>
         <display-name>DWR Servlet</display-name>
         <servlet-name>dwr-invoker</servlet-name>
-        <servlet-class>org.jivesoftware.openfire.reporting.MonitoringDWR</servlet-class>
-        <init-param>
-            <param-name>logLevel</param-name>
-            <param-value>FATAL</param-value>
-        </init-param>
-        <init-param>
-            <param-name>skipDefaultConfig</param-name>
-            <param-value>true</param-value>
-        </init-param>
+        <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>ConversationServlet</servlet-name>
         <servlet-class>org.jivesoftware.openfire.archive.ConversationPDFServlet</servlet-class>
     </servlet>
 
-    <!-- Servlet mappings -->
     <servlet-mapping>
         <servlet-name>GraphServlet</servlet-name>
         <url-pattern>/graph</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ConversationServlet</servlet-name>
         <url-pattern>/conversation</url-pattern>
     </servlet-mapping>
-
 
     <servlet-mapping>
         <servlet-name>dwr-invoker</servlet-name>

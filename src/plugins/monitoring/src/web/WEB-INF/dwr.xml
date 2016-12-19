@@ -1,0 +1,13 @@
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+        "http://directwebremoting.org/schema/dwr30.dtd">
+<dwr>
+    <allow>
+        <create creator="new" javascript="Stats">
+            <param name="class" value="org.jivesoftware.openfire.reporting.stats.StatsAction"/>
+        </create>
+        <convert converter="bean" match="org.jivesoftware.openfire.archive.ConversationInfo"/>
+        <create creator="new" javascript="conversations">
+            <param name="class" value="org.jivesoftware.openfire.archive.ConversationUtils"/>
+        </create>
+    </allow>
+</dwr>

@@ -12,7 +12,7 @@ package net.sf.kraken.web;
 
 import java.io.IOException;
 
-import uk.ltd.getahead.dwr.DWRServlet;
+import org.directwebremoting.servlet.DwrServlet;
 import uk.ltd.getahead.dwr.Configuration;
 import uk.ltd.getahead.dwr.impl.DefaultInterfaceProcessor;
 
