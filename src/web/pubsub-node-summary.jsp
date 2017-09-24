@@ -148,7 +148,7 @@
     <c:forEach begin="1" end="${numPages}" varStatus="loop">
         <c:url value="pubsub-node-summary.jsp" var="url">
             <c:param name="start" value="${(loop.index-1)*range}" />
-            <c:param name="owner" value="${ not empty owner ? admin:urlEncode(owner) : ''}" />
+            <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}"/>
         </c:url>
         <a href="${url}" class="${ loop.index == curPage ? 'jive-current' : ''}">
             <c:out value="${loop.index}"/>
@@ -202,14 +202,17 @@
         <td width="1%" align="center">
             <c:url value="pubsub-node-items.jsp" var="url">
                 <c:param name="nodeID" value="${node.getNodeID()}" />
+                <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}" />
             </c:url>
             <a href="${url}">
                 <c:out value="${node.getPublishedItems().size()}" />
+                <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}" />
             </a>
         </td>
         <td width="1%" align="center">
             <c:url value="pubsub-node-subscribers.jsp" var="url">
                 <c:param name="nodeID" value="${node.getNodeID()}" />
+                <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}" />
             </c:url>
             <a href="${url}">
                 <c:out value="${node.getAllSubscriptions().size()}" />
@@ -218,6 +221,7 @@
         <td width="1%" align="center" style="border-right:1px #ccc solid;">
             <c:url value="pubsub-node-delete.jsp" var="url">
                 <c:param name="nodeID" value="${node.getNodeID()}" />
+                <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}" />
             </c:url>
             <a href="${url}" title="<fmt:message key="global.click_delete" />">
                 <img src="images/delete-16x16.gif" width="16" height="16" border="0" alt="">
@@ -238,6 +242,7 @@
     <c:forEach begin="1" end="${numPages}" varStatus="loop">
         <c:url value="pubsub-node-summary.jsp" var="url">
             <c:param name="start" value="${(loop.index-1)*range}" />
+            <c:param name="owner" value="${not empty owner ? admin:urlEncode(owner) : ''}" />
         </c:url>
         <a href="${url}" class="${ loop.index == curPage ? 'jive-current' : ''}">
             <c:out value="${loop.index}"/>

@@ -88,7 +88,6 @@
     }
 
     pageContext.setAttribute("node", node);
-    pageContext.setAttribute("owner", owner );
 
 %>
 
