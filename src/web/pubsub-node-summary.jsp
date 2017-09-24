@@ -148,9 +148,7 @@
     <c:forEach begin="1" end="${numPages}" varStatus="loop">
         <c:url value="pubsub-node-summary.jsp" var="url">
             <c:param name="start" value="${(loop.index-1)*range}" />
-            <c:if test="${not empty owner}">
-                <c:param name="owner">${admin:urlEncode(owner)}</c:param>
-            </c:if>
+            <c:param name="owner" value="${ not empty owner ? admin:urlEncode(owner) : ''}" />
         </c:url>
         <a href="${url}" class="${ loop.index == curPage ? 'jive-current' : ''}">
             <c:out value="${loop.index}"/>
