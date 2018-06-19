@@ -17,8 +17,13 @@
 package org.jivesoftware.openfire.auth;
 
 import org.jivesoftware.openfire.XMPPServerInfo;
-import org.jivesoftware.openfire.user.UserManager;
+import org.jivesoftware.openfire.session.ConnectionSettings;
 import org.jivesoftware.util.JiveGlobals;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A token that proves that a user has successfully authenticated.
@@ -123,5 +128,108 @@ public class AuthToken {
      */
     public boolean isAnonymous() {
         return username == null;
+    }
+
+    /**
+     * Scope that allows data to be send to another XMPP domain (federation).
+     */
+    public static final String SCOPE_S2S_SENDDATA = "scope.s2s.senddata";
+
+    /**
+     * The scopes that are defined for this token.
+     *
+     * An empty collection implies that all usage is permitted..
+     */
+    private final ConcurrentMap<String,Set<String>> scopes = new ConcurrentHashMap<>();
+
+    /**
+     * Verifies if a scope, without any restrictions to certain details, is
+     * allowable for this token.
+     *
+     * @param scope The scope (cannot be null or empty).
+     * @return true if usage is allowed, false otherwise.
+     */
+    public boolean isAllowed( String scope )
+    {
+        return isAllowed( scope, null );
+    }
+
+    /**
+     * Verifies if a scope, optionally restricted to a certain detail, is
+     * allowable for this token.
+     *
+     * @param scope The scope (cannot be null or empty).
+     * @param restriction optional restriction detail (can be null, cannot be empty).
+     * @return true if usage is allowed, false otherwise.
+     */
+    public boolean isAllowed( String scope, String restriction )
+    {
+        if ( scope == null || scope.isEmpty() ) {
+            throw new IllegalArgumentException( "Argument 'scope' cannot be null or an empty String." );
+        }
+
+        if ( restriction != null && restriction.isEmpty() ) {
+            throw new IllegalArgumentException( "Argument 'restriction' cannot be an empty String." );
+        }
+
+        // Special, system wide scope definition take priority when they deny usage.
+        if ( !isAllowedBySystemConfig( scope, restriction ) ) {
+            return false;
+        }
+
+        // When no scopes are defined, everything is allowed.
+        if ( scopes.isEmpty() ) {
+            return true;
+        }
+
+        // If there are scopes for this token, but not the scope that is requested, usage is prohibited.
+        if ( !scopes.containsKey( scope ) ) {
+            return false;
+        }
+
+        // A scope is potentially restricted. Check these restrictions.
+        final Set<String> restrictions = scopes.get( scope );
+
+        // When there are no restrictions, usage is allowed.
+        if ( restrictions == null || restrictions.isEmpty() ) {
+            return true;
+        }
+
+        // When restrictions are defined, but a restriction is not provided in the request, disallow usage.
+        if ( restriction == null ) {
+            return false;
+        }
+
+        // Allow usage only if the requested restriction is in the defined restrictions.
+        return restrictions.contains( restriction );
+    }
+
+    /**
+     * Verify any system-wide setting.
+     *
+     * @param scope The scope (cannot be null or empty).
+     * @param restriction optional restriction detail (can be null, cannot be empty).
+     * @return true if usage is allowed, false otherwise.
+     */
+    private boolean isAllowedBySystemConfig( String scope, String restriction )
+    {
+        if ( scope == null || scope.isEmpty() ) {
+            throw new IllegalArgumentException( "Argument 'scope' cannot be null or an empty String." );
+        }
+
+        if ( restriction != null && restriction.isEmpty() ) {
+            throw new IllegalArgumentException( "Argument 'restriction' cannot be an empty String." );
+        }
+
+        if ( SCOPE_S2S_SENDDATA.equals( scope ) )
+        {
+            // Check the system property that controls if anonymous users can send data over federation.
+            if ( isAnonymous() && !JiveGlobals.getBooleanProperty( ConnectionSettings.Server.ALLOW_ANONYMOUS_OUTBOUND_DATA, false ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

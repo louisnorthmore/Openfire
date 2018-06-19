@@ -19,6 +19,7 @@ package org.jivesoftware.openfire.spi;
 import org.dom4j.Element;
 import org.dom4j.QName;
 import org.jivesoftware.openfire.*;
+import org.jivesoftware.openfire.auth.AuthToken;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.openfire.carbons.Received;
 import org.jivesoftware.openfire.cluster.ClusterEventListener;
@@ -457,14 +458,17 @@ public class RoutingTableImpl extends BasicModule implements RoutingTable, Clust
      */
     private boolean routeToRemoteDomain(JID jid, Packet packet, boolean routed)
     {
-        if ( !JiveGlobals.getBooleanProperty( ConnectionSettings.Server.ALLOW_ANONYMOUS_OUTBOUND_DATA, false ) )
-        {
-            // Disallow anonymous local users to send data to other domains than the local domain.
-            if ( isAnonymousRoute( packet.getFrom() ) )
+        if (packet.getFrom() != null && packet.getFrom().getNode() != null && packet.getFrom().getResource() != null) {
+            final ClientSession session = getClientRoute( packet.getFrom() );
+            if ( session instanceof LocalClientSession ) // FIXME Should getAuthToken be pushed from LocalClientSession to ClientSession?
             {
-                Log.info( "The anonymous user '{}' attempted to send data to '{}', which is on a remote domain. Openfire is configured to not allow anonymous users to send data to remote domains.", packet.getFrom(), jid );
-                routed = false;
-                return routed;
+                final boolean allowed = ((LocalClientSession) session).getAuthToken().isAllowed( AuthToken.SCOPE_S2S_SENDDATA, packet.getTo().getDomain() );
+                if ( !allowed )
+                {
+                    Log.debug( "The user '{}' attempted to send data to '{}', but is not allowed to send data to federated domains.", packet.getFrom(), jid );
+                    routed = false;
+                    return routed;
+                }
             }
         }
 
